@@ -2,8 +2,11 @@ FROM mygento/puppet
 
 MAINTAINER nikita@mygento.ru
 
-RUN wget -qO - https://repo.varnish-cache.org/GPG-key.txt | apt-key add - && \
-  echo "deb https://repo.varnish-cache.org/debian/ jessie varnish-4.1" >> /etc/apt/sources.list.d/varnish-cache.list && \
-  apt-get -qq update && apt-get -qqy install varnish
+ADD start.sh /start.sh
+
+ENV VCL_CONFIG      /etc/varnish/default.vcl
+ENV CACHE_SIZE      64m
+ENV VARNISHD_PARAMS -p default_ttl=3600 -p default_grace=3600
+CMD /start.sh
   
 EXPOSE 80

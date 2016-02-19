@@ -1,0 +1,11 @@
+---
+classes:
+    - 'varnish'
+    
+varnish::version: '3.0'
+varnish::service_ensure: 'stopped'
+varnish::service_enable: false
+varnish::service_log_ensure: 'stopped'
+varnish::service_log_enable: false
+varnish::service_ncsa_ensure: 'stopped'
+varnish::service_ncsa_enable: false
