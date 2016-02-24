@@ -5,5 +5,4 @@ MAINTAINER nikita@mygento.ru
 ADD start.sh /start.sh
 CMD /start.sh
 
-EXPOSE 6081
-EXPOSE 6082
+EXPOSE 6081 6082
