@@ -8,6 +8,6 @@ env:
     - VARNISH_VERSION=3.0
 build:
   pre_ci:
-    docker build --rm=true --pull=true --force-rm=true --no-cache=true --tag=mygento/varnish:$VARNISH_VERSION
+    docker build --rm=true --pull=true --force-rm=true --no-cache=true --tag=mygento/varnish:$VARNISH_VERSION .
   on_success:
     docker push mygento/varnish:$VARNISH_VERSION
