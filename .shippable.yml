@@ -1,2 +1,12 @@
 script:
   - true
+
+env:
+  matrix:
+    - VARNISH_VERSION=4.1
+    - VARNISH_VERSION=4.0
+    - VARNISH_VERSION=3.0
+build:
+  on_success:
+    docker build --rm=true --pull=true --force-rm=true --no-cache=true --tag=mygento/varnish:$VARNISH_VERSION
+    docker push mygento/varnish:$VARNISH_VERSION
