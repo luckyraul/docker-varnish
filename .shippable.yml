@@ -5,6 +5,7 @@ env:
     - VARNISH_VERSION='3.0'
 build:
   pre_ci:
+    sed -i -e s/VARNISH_VERSION/${VARNISH_VERSION}/g module.yaml
     docker build --rm=true --pull=true --force-rm=true --no-cache=true --build-arg FACTER_VARNISH_VERSION=$VARNISH_VERSION --tag=mygento/varnish:$VARNISH_VERSION .
   pre_ci_boot:
     image_name: mygento/varnish
