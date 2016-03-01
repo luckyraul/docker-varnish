@@ -2,7 +2,7 @@
 classes:
     - 'varnish'
 
-varnish::version: "%{facts.varnish_version}"
+varnish::version: "'%{facts.varnish_version}'"
 varnish::service_ensure: 'stopped'
 varnish::service_enable: false
 varnish::service_log_ensure: 'stopped'
