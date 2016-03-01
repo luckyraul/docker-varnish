@@ -12,7 +12,7 @@ build:
     image_tag: $VARNISH_VERSION
     pull: false
   ci:
-      true
+     - varnishd -V
   on_success:
     docker push mygento/varnish:$VARNISH_VERSION
 
