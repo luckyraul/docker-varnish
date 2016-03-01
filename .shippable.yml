@@ -14,3 +14,8 @@ build:
       true
   on_success:
     docker push mygento/varnish:$VARNISH_VERSION
+
+integrations:
+    hub:
+      - integrationName: 'Docker by luckyraul'
+        type: docker
