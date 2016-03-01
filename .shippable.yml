@@ -1,8 +1,8 @@
 env:
   matrix:
-    - VARNISH_VERSION=4.1
-    - VARNISH_VERSION=4.0
-    - VARNISH_VERSION=3.0
+    - VARNISH_VERSION='4.1'
+    - VARNISH_VERSION='4.0'
+    - VARNISH_VERSION='3.0'
 build:
   pre_ci:
     docker build --rm=true --pull=true --force-rm=true --no-cache=true --build-arg FACTER_VARNISH_VERSION=$VARNISH_VERSION --tag=mygento/varnish:$VARNISH_VERSION .
