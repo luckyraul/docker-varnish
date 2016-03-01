@@ -13,7 +13,7 @@ build:
     pull: false
   ci:
      - varnishd -V
-  on_success:
+  post_ci:
     docker push mygento/varnish:$VARNISH_VERSION
 
 integrations:
