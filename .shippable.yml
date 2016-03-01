@@ -17,5 +17,5 @@ build:
 
 integrations:
     hub:
-      - integrationName: luckyraul
+      - integrationName: Docker
         type: docker
