@@ -20,3 +20,4 @@ integrations:
     hub:
       - integrationName: Docker
         type: docker
+        agent_only: true
