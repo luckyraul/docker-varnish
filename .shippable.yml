@@ -14,10 +14,9 @@ build:
   ci:
      - varnishd -V
   post_ci:
-    docker push mygento/varnish:$VARNISH_VERSION
+    sudo docker push mygento/varnish:$VARNISH_VERSION
 
 integrations:
     hub:
       - integrationName: Docker
         type: docker
-        agent_only: true
