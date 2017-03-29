@@ -1,0 +1,7 @@
+from: debian:jessie-slim
+cmd: /start.sh
+maintainer: nikita@mygento.ru
+expose: 6081 6082
+inventory: false
+env:
+  - DEBIAN_FRONTEND=noninteractive

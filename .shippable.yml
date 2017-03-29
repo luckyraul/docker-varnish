@@ -1,22 +1,28 @@
 env:
   matrix:
+    - VARNISH_VERSION='5.1'
+    - VARNISH_VERSION='5.0'
     - VARNISH_VERSION='4.1'
     - VARNISH_VERSION='4.0'
     - VARNISH_VERSION='3.0'
 build:
   pre_ci:
-    - sed -i -e s/VARNISH_VERSION/${VARNISH_VERSION}/g module.yaml
-    - docker build --rm=true --pull=true --force-rm=true --no-cache=true --tag=mygento/varnish:$VARNISH_VERSION .
+    - apt-get install -qqy ruby
+    - gem install puppet --no-ri --no-rdoc
+    - puppet module install puppetlabs/image_build
+    - sed -ie 's/--show_diff//g' /etc/puppetlabs/code/modules/image_build/templates/Dockerfile.erb
+    - puppet docker build --image-name luckyraul/varnish:$VARNISH_VERSION
   pre_ci_boot:
-    image_name: mygento/varnish
+    image_name: luckyraul/varnish
     image_tag: $VARNISH_VERSION
     pull: false
   ci:
      - varnishd -V
-  post_ci:
-    sudo docker push mygento/varnish:$VARNISH_VERSION
+  push:
+    - docker push luckyraul/varnish:$VARNISH_VERSION
 
 integrations:
     hub:
       - integrationName: Docker
         type: docker
+        agent_only: true

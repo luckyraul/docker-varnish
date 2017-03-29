@@ -2,7 +2,7 @@
 classes:
     - 'varnish'
 
-varnish::version: 'VARNISH_VERSION'
+varnish::docker: true
 varnish::service_ensure: 'stopped'
 varnish::service_enable: false
 varnish::service_log_ensure: 'stopped'
