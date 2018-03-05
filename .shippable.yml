@@ -1,6 +1,7 @@
 env:
   matrix:
-    #- VARNISH_VERSION='5.1'
+    - VARNISH_VERSION='5.2'
+    - VARNISH_VERSION='5.1'
     - VARNISH_VERSION='5.0'
     - VARNISH_VERSION='4.1'
     - VARNISH_VERSION='4.0'
@@ -9,11 +10,10 @@ build:
   pre_ci:
     - apt-get install -qqy curl
     - gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-    - curl -L https://get.rvm.io | bash -s stable --ruby
+    - curl -sSL https://get.rvm.io | grep -v __rvm_print_headline | bash -s stable --ruby
     - source /usr/local/rvm/scripts/rvm
     - gem install puppet --no-ri --no-rdoc
     - puppet module install puppetlabs/image_build
-    - sed -ie 's/--show_diff//g' /etc/puppetlabs/code/modules/image_build/templates/Dockerfile.erb
     - puppet docker build --image-name luckyraul/varnish:$VARNISH_VERSION
   pre_ci_boot:
     image_name: luckyraul/varnish
@@ -23,6 +23,8 @@ build:
      - varnishd -V
   push:
     - docker push luckyraul/varnish:$VARNISH_VERSION
+    - docker tag luckyraul/varnish:$VARNISH_VERSION mygento/varnish:$VARNISH_VERSION
+    - docker push mygento/varnish:$VARNISH_VERSION
 
 integrations:
     hub:

@@ -10,3 +10,5 @@ Docker image for Varnish cache
 5.0 [![](https://images.microbadger.com/badges/image/luckyraul/varnish:5.0.svg)](https://microbadger.com/images/luckyraul/varnish:5.0)
 
 5.1 [![](https://images.microbadger.com/badges/image/luckyraul/varnish:5.1.svg)](https://microbadger.com/images/luckyraul/varnish:5.1)
+
+5.2 [![](https://images.microbadger.com/badges/image/luckyraul/varnish:5.2.svg)](https://microbadger.com/images/luckyraul/varnish:5.2)
