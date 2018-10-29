@@ -1,5 +1,7 @@
 env:
   matrix:
+    - VARNISH_VERSION='6.1'
+    - VARNISH_VERSION='6.0'
     - VARNISH_VERSION='5.2'
     - VARNISH_VERSION='5.1'
     - VARNISH_VERSION='5.0'
