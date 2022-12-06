@@ -4,4 +4,4 @@ mod 'luckyraul/varnish', :git => 'https://github.com/luckyraul/puppet-varnish.gi
 mod 'puppetlabs/dummy_service'
 mod 'puppetlabs/stdlib'
 mod 'puppetlabs/apt'
-mod 'puppetlabs/inifile'
+mod 'puppet/systemd'
