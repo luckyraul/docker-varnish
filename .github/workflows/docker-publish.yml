@@ -12,13 +12,14 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '7.2'
-          - '6.6'
-          - 'buster'
-          - 'bullseye'
-          - 'bookworm'
+          # - trixie
+          - bookworm
+          # - lts
+          # - fresh
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Test Ruby Version
         run: ruby -v
@@ -27,61 +28,65 @@ jobs:
         continue-on-error: true
         run: |
           sudo apt-get -qqy install git sudo ruby
-          sudo gem install puppet --no-document
+          sudo gem install puppet -v 7.27.0 --no-document
           sudo rm -fR /etc/puppetlabs/code/modules/image_build
           sudo git clone --single-branch --branch v2 https://github.com/luckyraul/puppetlabs-image_build.git /etc/puppetlabs/code/modules/image_build
       - name: Test Puppet Version
         run: puppet -V
 
       - name: Build Image
-        run: sudo puppet docker build --image-name luckyraul/varnish:${{ matrix.version }} --no-show-diff
-      - name: Test Image Version
-        run: docker run --rm luckyraul/varnish:${{ matrix.version }} varnishd -V
+        run: |
+          for arch in amd64 arm64 ; do
+              sudo puppet docker build --image-name luckyraul/varnish:${{ matrix.version }}-$arch --no-show-diff --native --buildkit --platform linux/$arch --load
+          done
+      - name: Test Image Version Amd64
+        run: docker run --rm luckyraul/varnish:${{ matrix.version }}-amd64 varnishd -V
+      - name: Test Image Version Arm64
+        run: docker run --rm luckyraul/varnish:${{ matrix.version }}-arm64 varnishd -V
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
-
-      - name: Push image
+      - name: Retag Images
         run: |
-          export IMAGE_NAME=luckyraul/varnish:${{ matrix.version }}
-          export IMAGE_ID=ghcr.io/luckyraul/varnish:${{ matrix.version }}
-
-          # Change all uppercase to lowercase
-          export IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          echo $IMAGE_ID
-
-          docker tag $IMAGE_NAME $IMAGE_ID
-          docker push $IMAGE_ID
-      - name: Push image Mygento
+          docker tag luckyraul/varnish:${{ matrix.version }}-amd64 ghcr.io/luckyraul/varnish:${{ matrix.version }}-amd64
+          docker tag luckyraul/varnish:${{ matrix.version }}-arm64 ghcr.io/luckyraul/varnish:${{ matrix.version }}-arm64
+      - name: Push Images
         run: |
-          export IMAGE_NAME=luckyraul/varnish:${{ matrix.version }}
-          export IMAGE_ID=ghcr.io/mygento/varnish:${{ matrix.version }}
-
-          # Change all uppercase to lowercase
-          export IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          echo $IMAGE_ID
-
-          docker tag $IMAGE_NAME $IMAGE_ID
-          docker push $IMAGE_ID
+          docker push ghcr.io/luckyraul/varnish:${{ matrix.version }}-amd64
+          docker push ghcr.io/luckyraul/varnish:${{ matrix.version }}-arm64
+      - name: Create Manifest
+        run: |
+          docker manifest create ghcr.io/luckyraul/varnish:${{ matrix.version }} --amend ghcr.io/luckyraul/varnish:${{ matrix.version }}-arm64 --amend ghcr.io/luckyraul/varnish:${{ matrix.version }}-amd64
+          docker manifest push ghcr.io/luckyraul/varnish:${{ matrix.version }}
+      - name: Retag Images Mygento
+        run: |
+          docker tag ghcr.io/luckyraul/varnish:${{ matrix.version }}-amd64 ghcr.io/mygento/varnish:${{ matrix.version }}-amd64
+          docker tag ghcr.io/luckyraul/varnish:${{ matrix.version }}-arm64 ghcr.io/mygento/varnish:${{ matrix.version }}-arm64
+      - name: Push Images Mygento
+        run: |
+          docker push ghcr.io/mygento/varnish:${{ matrix.version }}-amd64
+          docker push ghcr.io/mygento/varnish:${{ matrix.version }}-arm64
+      - name: Create Manifest Mygento
+        run: |
+          docker manifest create ghcr.io/mygento/varnish:${{ matrix.version }} --amend ghcr.io/mygento/varnish:${{ matrix.version }}-arm64 --amend ghcr.io/mygento/varnish:${{ matrix.version }}-amd64
+          docker manifest push ghcr.io/mygento/varnish:${{ matrix.version }}
   post_build:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Delete untagged ghcr LR
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v3
         with:
           token: ${{ secrets.CR_PAT }}
           repository_owner: ${{ github.repository_owner }}
           owner_type: user
           package_name: varnish
       - name: Delete untagged ghcr Mygento
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v3
         with:
           token: ${{ secrets.CR_PAT }}
           repository_owner: mygento

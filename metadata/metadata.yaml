@@ -1,6 +1,6 @@
-from: debian:bullseye-slim
+from: debian:trixie-slim
 cmd: /start.sh
-maintainer: nikita@mygento.ru
+maintainer: nikita@mygento.com
 expose: 6081 6082
 inventory: false
 env:

@@ -1,6 +1,6 @@
 ---
 classes:
-    - 'varnish'
+  - 'varnish'
 
 varnish::docker: true
 varnish::service_ensure: 'stopped'
@@ -9,3 +9,4 @@ varnish::service_log_ensure: 'stopped'
 varnish::service_log_enable: false
 varnish::service_ncsa_ensure: 'stopped'
 varnish::service_ncsa_enable: false
+varnish::manage_repos: false

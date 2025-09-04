@@ -1,2 +1,27 @@
 lookup('classes', { merge => unique }).include
 include 'dummy_service'
+
+file { '/entrypoint.sh':
+  ensure  => file,
+  mode    => '0755',
+  content => inline_epp(@(END_OF_SCRIPT)),
+    #!/bin/bash
+
+    set -e
+
+    CACHE_SIZE="${CACHE_SIZE:-128m}"
+    CACHE_STORAGE="${CACHE_STORAGE:-malloc,${CACHE_SIZE}}"
+
+    ADDRESS_PORT="${ADDRESS_PORT:-:6081}"
+
+    ADMIN_PORT="${ADMIN_PORT:-127.0.0.1:6082}"
+
+    exec varnishd -F \
+      -f /etc/varnish/default.vcl \
+      -a ${ADDRESS_PORT} \
+      -T ${ADMIN_PORT} \
+      -S /etc/varnish/secret \
+      -s ${CACHE_STORAGE} \
+      -p vsl_mask=+Hash
+    END_OF_SCRIPT
+}
